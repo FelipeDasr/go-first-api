@@ -5,5 +5,5 @@ import (
 )
 
 func startOrderRouter(router *gin.Engine) {
-	orderRouter := router.Group("/orders")
+	// orderRouter := router.Group("/orders")
 }
