@@ -30,3 +30,8 @@ func StartConnection() {
 		log.Fatalf("Error pinging database.\n\n%v", err)
 	}
 }
+
+// CreateQueryAndContext creates a new query and context
+func CreateQueryAndContext() (*Queries, context.Context) {
+	return New(Connection), context.Background()
+}

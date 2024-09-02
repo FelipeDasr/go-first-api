@@ -1,19 +1,16 @@
 package service
 
 import (
-	"context"
 	"database/sql"
 	"errors"
 	"go-databases/internal/db"
 )
 
-type CustomerServices struct {
-	Db *sql.DB
-}
+type CustomerServices struct {}
 
 // NewCustomerServices creates a new CustomerServices
 func NewCustomerServices(db *sql.DB) *CustomerServices {
-	return &CustomerServices{Db: db}
+	return &CustomerServices{}
 }
 
 type CreateCustomerData struct {
@@ -21,16 +18,35 @@ type CreateCustomerData struct {
 	Email string `json:"email" binding:"required,email"`
 }
 
+// CreateCustomer creates a new customer
 func (cs *CustomerServices) CreateCustomer(data *CreateCustomerData) (db.Customer, error) {
-	ctx := context.Background()
-	query := db.New(cs.Db)
+	query, ctx := db.CreateQueryAndContext()
 
 	if _, err := query.CustomerAlreadyExistsByEmail(ctx, data.Email); err == nil {
-		return db.Customer{}, errors.New("Customer already exists with email: " + data.Email)
+		return db.Customer{}, errors.New("customer already exists with email: " + data.Email)
 	}
 
-	return query.CreateCustomer(ctx, db.CreateCustomerParams{
+	newCustomer, err := query.CreateCustomer(ctx, db.CreateCustomerParams{
 		Name: data.Name,
 		Email: data.Email,
 	});
+
+	if err != nil {
+		return db.Customer{}, errors.New("error creating customer")
+	}
+
+	return newCustomer, nil
+}
+
+// GetCustomerById gets a customer by id
+func (cs *CustomerServices) GetCustomerById(id int32) (db.Customer, error) {
+	query, ctx := db.CreateQueryAndContext()
+
+	customer, err := query.GetCustomerById(ctx, id)
+
+	if err != nil {
+		return db.Customer{}, errors.New("customer not found")
+	}
+
+	return customer, nil;
 }
