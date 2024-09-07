@@ -35,3 +35,15 @@ func StartConnection() {
 func CreateQueryAndContext() (*Queries, context.Context) {
 	return New(Connection), context.Background()
 }
+
+func CreateQueryAndContextWithTx() (*Queries, context.Context, error)  {
+	tx, err := Connection.Begin()
+	query, ctx := CreateQueryAndContext()
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	qtx := query.WithTx(tx)
+	return qtx, ctx, nil;
+}
