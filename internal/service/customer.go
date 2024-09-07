@@ -1,7 +1,6 @@
 package service
 
 import (
-	"database/sql"
 	"errors"
 	"go-databases/internal/db"
 )
@@ -9,7 +8,7 @@ import (
 type CustomerServices struct {}
 
 // NewCustomerServices creates a new CustomerServices
-func NewCustomerServices(db *sql.DB) *CustomerServices {
+func NewCustomerServices() *CustomerServices {
 	return &CustomerServices{}
 }
 
