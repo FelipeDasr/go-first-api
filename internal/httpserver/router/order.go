@@ -1,9 +1,17 @@
 package router
 
 import (
+	"go-databases/internal/httpserver/controller"
+	"go-databases/internal/service"
+
 	"github.com/gin-gonic/gin"
 )
 
 func startOrderRouter(router *gin.Engine) {
-	// orderRouter := router.Group("/orders")
+	orderServices := service.NewOrderService()
+	ordersController := controller.NewOrderController(orderServices)
+
+	orderRouter := router.Group("/orders")
+
+	orderRouter.POST("/", ordersController.CreateOrder)
 }
