@@ -7,14 +7,14 @@ import (
 
 type OrderService struct{}
 
+func NewOrderService() *OrderService {
+	return &OrderService{}
+}
+
 type CreateOrderData struct {
 	CustomerID  int32 `json:"customer_id" binding:"required,numeric"`
 	ProductID   int32 `json:"product_id" binding:"required,numeric"`
 	UnitsAmount int32 `json:"units_amount" binding:"required,numeric,gt=0"`
-}
-
-func NewOrderService() *OrderService {
-	return &OrderService{}
 }
 
 func (o *OrderService) CreateOrder(data *CreateOrderData) (db.Order, error) {
