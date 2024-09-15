@@ -1,7 +1,6 @@
 package router
 
 import (
-	"go-databases/internal/db"
 	"go-databases/internal/httpserver/controller"
 	"go-databases/internal/service"
 
@@ -9,7 +8,7 @@ import (
 )
 
 func startCustomerRouter(router *gin.Engine) {
-	customerServices := service.NewCustomerServices(db.Connection)
+	customerServices := service.NewCustomerServices()
 	customerController := controller.NewCustomerController(customerServices)
 
 	customerRouter := router.Group("/customers")
