@@ -41,3 +41,15 @@ func (p *ProductService) CreateProduct(data *CreateProductData) (db.Product, err
 
 	return product, nil;
 }
+
+func (p *ProductService) GetProductById(id int32) (db.Product, error) {
+	query, ctx := db.CreateQueryAndContext()
+
+	product, err := query.GetProductById(ctx, id)
+
+	if err != nil {
+		return db.Product{}, errors.New("product not found")
+	}
+
+	return product, nil;
+}

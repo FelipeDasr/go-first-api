@@ -1,8 +1,10 @@
 package controller
 
 import (
+	"errors"
 	"go-databases/internal/httpserver/httperror"
 	"go-databases/internal/service"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -30,4 +32,22 @@ func (pc *ProductController) CreateProduct(ctx *gin.Context) {
 	}
 
 	ctx.JSON(201, result)
+}
+
+func (pc *ProductController) GetProductById(ctx *gin.Context) {
+	id, err := strconv.ParseInt(ctx.Param("id"), 10, 32)
+
+	if err != nil {
+		httperror.HandleError(ctx, errors.New("the id must be a number"))
+		return
+	}
+
+	product, err := pc.ProductService.GetProductById(int32(id))
+
+	if err != nil {
+		httperror.HandleError(ctx, err)
+		return
+	}
+
+	ctx.JSON(200, product)
 }
