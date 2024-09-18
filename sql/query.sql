@@ -23,7 +23,14 @@ SELECT p.id FROM products p WHERE p.name = $1 LIMIT 1;
 SELECT * FROM products WHERE id = $1 LIMIT 1;
 
 -- name: GetProducts :many
-SELECT * FROM products LIMIT $1 OFFSET $2;
+SELECT * FROM products p
+WHERE
+  ($3::TEXT IS NULL OR p."name" ILIKE '%' || $3 || '%') AND -- filter by name
+  ($4::INT IS NULL OR p.price >= $4) AND -- filter by min price
+  ($5::INT IS NULL OR p.price <= $5) AND -- filter by max price
+  ($6::INT IS NULL OR p.stock >= $6) AND -- filter by min stock
+  ($7::INT IS NULL OR p.stock <= $7) -- filter by max stock
+LIMIT $1 OFFSET $2;
 
 -- name: IncrementProductStockById :exec
 UPDATE products SET stock = stock + $2 WHERE id = $1;
