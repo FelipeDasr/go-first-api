@@ -14,4 +14,5 @@ func startOrderRouter(router *gin.Engine) {
 	orderRouter := router.Group("/orders")
 
 	orderRouter.POST("/", ordersController.CreateOrder)
+	orderRouter.GET("/:id", ordersController.GetOrderById)
 }

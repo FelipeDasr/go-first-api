@@ -59,3 +59,15 @@ func (o *OrderService) CreateOrder(data *CreateOrderData) (db.Order, error) {
 
 	return order, nil
 }
+
+func (oc *OrderService) GetOrderById(orderId int32) (db.Order, error) {
+	query, ctx := db.CreateQueryAndContext()
+
+	order, err := query.GetOrderById(ctx, orderId)
+
+	if err != nil {
+		return db.Order{}, errors.New("order not found")
+	}
+
+	return order, nil
+}

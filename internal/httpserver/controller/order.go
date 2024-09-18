@@ -1,8 +1,10 @@
 package controller
 
 import (
+	"errors"
 	"go-databases/internal/httpserver/httperror"
 	"go-databases/internal/service"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -32,4 +34,22 @@ func (oc *OrderController) CreateOrder(ctx *gin.Context) {
 	}
 
 	ctx.JSON(201, result)
+}
+
+func (oc *OrderController) GetOrderById(ctx *gin.Context) {
+	orderId, err := strconv.ParseInt(ctx.Param("id"), 10, 32)
+
+	if err != nil {
+		httperror.HandleError(ctx, errors.New("the order id must be a number"))
+		return
+	}
+
+	result, err := oc.OrderService.GetOrderById(int32(orderId))
+
+	if err != nil {
+		httperror.HandleError(ctx, err)
+		return
+	}
+
+	ctx.JSON(200, result)
 }
