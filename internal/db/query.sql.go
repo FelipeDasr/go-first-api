@@ -108,6 +108,77 @@ func (q *Queries) GetCustomerById(ctx context.Context, id int32) (Customer, erro
 	return i, err
 }
 
+const getCustomers = `-- name: GetCustomers :many
+SELECT id, name, email FROM customers c LIMIT $1 OFFSET $2
+`
+
+type GetCustomersParams struct {
+	Limit  int32
+	Offset int32
+}
+
+func (q *Queries) GetCustomers(ctx context.Context, arg GetCustomersParams) ([]Customer, error) {
+	rows, err := q.db.QueryContext(ctx, getCustomers, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Customer
+	for rows.Next() {
+		var i Customer
+		if err := rows.Scan(&i.ID, &i.Name, &i.Email); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getManyOrders = `-- name: GetManyOrders :many
+SELECT id, customer_id, product_id, units_amount, unit_price, created_at FROM orders o LIMIT $1 OFFSET $2
+`
+
+type GetManyOrdersParams struct {
+	Limit  int32
+	Offset int32
+}
+
+func (q *Queries) GetManyOrders(ctx context.Context, arg GetManyOrdersParams) ([]Order, error) {
+	rows, err := q.db.QueryContext(ctx, getManyOrders, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Order
+	for rows.Next() {
+		var i Order
+		if err := rows.Scan(
+			&i.ID,
+			&i.CustomerID,
+			&i.ProductID,
+			&i.UnitsAmount,
+			&i.UnitPrice,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getOrderById = `-- name: GetOrderById :one
 SELECT id, customer_id, product_id, units_amount, unit_price, created_at FROM orders WHERE id = $1 LIMIT 1
 `
@@ -124,86 +195,6 @@ func (q *Queries) GetOrderById(ctx context.Context, id int32) (Order, error) {
 		&i.CreatedAt,
 	)
 	return i, err
-}
-
-const getOrdersByCustomerId = `-- name: GetOrdersByCustomerId :many
-SELECT id, customer_id, product_id, units_amount, unit_price, created_at FROM orders WHERE customer_id = $1 LIMIT $2 OFFSET $3
-`
-
-type GetOrdersByCustomerIdParams struct {
-	CustomerID int32
-	Limit      int32
-	Offset     int32
-}
-
-func (q *Queries) GetOrdersByCustomerId(ctx context.Context, arg GetOrdersByCustomerIdParams) ([]Order, error) {
-	rows, err := q.db.QueryContext(ctx, getOrdersByCustomerId, arg.CustomerID, arg.Limit, arg.Offset)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []Order
-	for rows.Next() {
-		var i Order
-		if err := rows.Scan(
-			&i.ID,
-			&i.CustomerID,
-			&i.ProductID,
-			&i.UnitsAmount,
-			&i.UnitPrice,
-			&i.CreatedAt,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const getOrdersByProductId = `-- name: GetOrdersByProductId :many
-SELECT id, customer_id, product_id, units_amount, unit_price, created_at FROM orders WHERE product_id = $1 LIMIT $2 OFFSET $3
-`
-
-type GetOrdersByProductIdParams struct {
-	ProductID int32
-	Limit     int32
-	Offset    int32
-}
-
-func (q *Queries) GetOrdersByProductId(ctx context.Context, arg GetOrdersByProductIdParams) ([]Order, error) {
-	rows, err := q.db.QueryContext(ctx, getOrdersByProductId, arg.ProductID, arg.Limit, arg.Offset)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []Order
-	for rows.Next() {
-		var i Order
-		if err := rows.Scan(
-			&i.ID,
-			&i.CustomerID,
-			&i.ProductID,
-			&i.UnitsAmount,
-			&i.UnitPrice,
-			&i.CreatedAt,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
 }
 
 const getProductById = `-- name: GetProductById :one

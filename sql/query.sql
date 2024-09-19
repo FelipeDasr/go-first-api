@@ -9,6 +9,9 @@ SELECT c.id FROM customers c WHERE c.email = $1 LIMIT 1;
 -- name: GetCustomerById :one
 SELECT * FROM customers WHERE id = $1;
 
+-- name: GetCustomers :many
+SELECT * FROM customers c LIMIT $1 OFFSET $2;
+
 
 ----- PRODUCTS -----
 
@@ -39,8 +42,5 @@ VALUES ($1, $2, $3, $4) RETURNING *;
 -- name: GetOrderById :one
 SELECT * FROM orders WHERE id = $1 LIMIT 1;
 
--- name: GetOrdersByCustomerId :many
-SELECT * FROM orders WHERE customer_id = $1 LIMIT $2 OFFSET $3;
-
--- name: GetOrdersByProductId :many
-SELECT * FROM orders WHERE product_id = $1 LIMIT $2 OFFSET $3;
+-- name: GetManyOrders :many
+SELECT * FROM orders o LIMIT $1 OFFSET $2;
