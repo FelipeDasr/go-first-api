@@ -53,3 +53,20 @@ func (oc *OrderController) GetOrderById(ctx *gin.Context) {
 
 	ctx.JSON(200, result)
 }
+
+func (oc *OrderController) GetMany(ctx *gin.Context) {
+	var data service.PaginationParams
+	if err := ctx.ShouldBind(&data); err != nil {
+		httperror.HandleError(ctx, err)
+		return
+	}
+
+	result, err := oc.OrderService.GetManyOrders(&data)	
+
+	if err != nil {
+		httperror.HandleError(ctx, err)
+		return
+	}
+
+	ctx.JSON(200, result)
+}

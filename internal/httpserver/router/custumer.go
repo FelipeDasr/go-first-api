@@ -13,5 +13,6 @@ func startCustomerRouter(router *gin.Engine) {
 
 	customerRouter := router.Group("/customers")
 	customerRouter.POST("/", customerController.CreateCustomer);
+	customerRouter.GET("/", customerController.GetMany);
 	customerRouter.GET("/:id", customerController.GetCustomerById);
 }

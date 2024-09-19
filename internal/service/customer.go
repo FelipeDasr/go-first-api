@@ -49,3 +49,19 @@ func (cs *CustomerServices) GetCustomerById(id int32) (db.Customer, error) {
 
 	return customer, nil;
 }
+
+// GetManyCustomers gets many customers
+func (cs *CustomerServices) GetManyCustomers(params PaginationParams) ([]db.Customer, error) {
+	query, ctx := db.CreateQueryAndContext()
+
+	customers, err := query.GetCustomers(ctx, db.GetCustomersParams{
+		Limit: params.Limit,
+		Offset: (params.Page - 1) * params.Limit,
+	})
+
+	if err != nil {
+		return nil, errors.New("error getting customers")
+	}
+
+	return customers, nil
+}

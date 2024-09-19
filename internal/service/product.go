@@ -54,12 +54,7 @@ func (p *ProductService) GetProductById(id int32) (db.Product, error) {
 	return product, nil;
 }
 
-type FindManyProductsParams struct {
-	Page int32 `json:"page" form:"page" binding:"required,numeric,gt=0"`
-	Limit int32 `json:"limit" form:"limit" binding:"required,numeric,gt=0"`
-}
-
-func (p *ProductService) GetManyProducts(queryParams *FindManyProductsParams) ([]db.Product, error) {
+func (p *ProductService) GetManyProducts(queryParams *PaginationParams) ([]db.Product, error) {
 	query, ctx := db.CreateQueryAndContext()
 
 	products, err := query.GetProducts(ctx, db.GetProductsParams{

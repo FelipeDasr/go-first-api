@@ -71,3 +71,18 @@ func (oc *OrderService) GetOrderById(orderId int32) (db.Order, error) {
 
 	return order, nil
 }
+
+func (oc *OrderService) GetManyOrders(queryParams *PaginationParams) ([]db.Order, error) {
+	query, ctx := db.CreateQueryAndContext()
+
+	orders, err := query.GetManyOrders(ctx, db.GetManyOrdersParams{
+		Limit: queryParams.Limit,
+		Offset: (queryParams.Page - 1) * queryParams.Limit,
+	})
+
+	if err != nil {
+		return nil, errors.New("no orders found")
+	}
+
+	return orders, nil
+}

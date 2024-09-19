@@ -53,7 +53,7 @@ func (pc *ProductController) GetProductById(ctx *gin.Context) {
 }
 
 func (pc *ProductController) GetManyProducts(ctx *gin.Context) {
-	var params service.FindManyProductsParams
+	var params service.PaginationParams
 	if err := ctx.ShouldBind(&params); err != nil {
 		httperror.HandleError(ctx, err)
 		return

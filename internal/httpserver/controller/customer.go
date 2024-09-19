@@ -2,6 +2,7 @@ package controller
 
 import (
 	"errors"
+	"fmt"
 	"go-databases/internal/httpserver/httperror"
 	"go-databases/internal/service"
 	"strconv"
@@ -44,6 +45,24 @@ func (cc *CustomerController) GetCustomerById(ctx *gin.Context) {
 	}
 
 	result, err := cc.CustomerService.GetCustomerById(int32(id))
+
+	if err != nil {
+		httperror.HandleError(ctx, err)
+		return
+	}
+
+	ctx.JSON(200, result)
+}
+
+func (cc *CustomerController) GetMany(ctx *gin.Context) {
+	var data service.PaginationParams
+	if err := ctx.ShouldBind(&data); err != nil {
+		fmt.Print("AQUI POHA")
+		httperror.HandleError(ctx, err)
+		return
+	}
+
+	result, err := cc.CustomerService.GetManyCustomers(data)	
 
 	if err != nil {
 		httperror.HandleError(ctx, err)
