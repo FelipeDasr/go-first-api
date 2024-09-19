@@ -14,5 +14,6 @@ func startProductRouter(router *gin.Engine) {
 	productRouter := router.Group("/products")
 
 	productRouter.POST("/", productController.CreateProduct)
+	productRouter.GET("/", productController.GetManyProducts)
 	productRouter.GET("/:id", productController.GetProductById)
 }

@@ -223,36 +223,16 @@ func (q *Queries) GetProductById(ctx context.Context, id int32) (Product, error)
 }
 
 const getProducts = `-- name: GetProducts :many
-SELECT id, name, price, stock FROM products p
-WHERE
-  ($3::TEXT IS NULL OR p."name" ILIKE '%' || $3 || '%') AND -- filter by name
-  ($4::INT IS NULL OR p.price >= $4) AND -- filter by min price
-  ($5::INT IS NULL OR p.price <= $5) AND -- filter by max price
-  ($6::INT IS NULL OR p.stock >= $6) AND -- filter by min stock
-  ($7::INT IS NULL OR p.stock <= $7) -- filter by max stock
-LIMIT $1 OFFSET $2
+SELECT id, name, price, stock FROM products p LIMIT $1 OFFSET $2
 `
 
 type GetProductsParams struct {
-	Limit   int32
-	Offset  int32
-	Column3 string
-	Column4 int32
-	Column5 int32
-	Column6 int32
-	Column7 int32
+	Limit  int32
+	Offset int32
 }
 
 func (q *Queries) GetProducts(ctx context.Context, arg GetProductsParams) ([]Product, error) {
-	rows, err := q.db.QueryContext(ctx, getProducts,
-		arg.Limit,
-		arg.Offset,
-		arg.Column3,
-		arg.Column4,
-		arg.Column5,
-		arg.Column6,
-		arg.Column7,
-	)
+	rows, err := q.db.QueryContext(ctx, getProducts, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}

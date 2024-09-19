@@ -51,3 +51,20 @@ func (pc *ProductController) GetProductById(ctx *gin.Context) {
 
 	ctx.JSON(200, product)
 }
+
+func (pc *ProductController) GetManyProducts(ctx *gin.Context) {
+	var params service.FindManyProductsParams
+	if err := ctx.ShouldBind(&params); err != nil {
+		httperror.HandleError(ctx, err)
+		return
+	}
+
+	products, err := pc.ProductService.GetManyProducts(&params)
+
+	if err != nil {
+		httperror.HandleError(ctx, err)
+		return
+	}
+
+	ctx.JSON(200, products)
+}
